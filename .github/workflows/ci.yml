@@ -19,4 +19,7 @@ jobs:
           distribution: 'temurin'
 
       - name: Build & Test
+        env:
+          MAIL_PASSWORD: ${{ secrets.MAIL_PASSWORD }}
+          BREVO_API_KEY: ${{ secrets.BREVO_API_KEY }}
         run: mvn clean test
