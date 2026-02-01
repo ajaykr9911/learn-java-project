@@ -2,7 +2,6 @@ package com.demo.controller;
 
 import com.demo.model.User;
 import com.demo.model.dto.BaseResponse;
-import com.demo.service.BreveEmailService;
 import com.demo.service.EmailService;
 import com.demo.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
     private final UserService userService;
     private final EmailService emailService;
-    private final BreveEmailService breveEmailService;
 
     @PostMapping("/save")
     public BaseResponse<User> saveUser(@RequestBody User user){
@@ -31,10 +29,5 @@ public class UserController {
         return BaseResponse.success("Email sent successfully to " + email);
     }
 
-    @PostMapping("/send-brevo-email")
-    public String sendBrevoEmail(@RequestParam String email, @RequestParam String message) {
-        breveEmailService.sendEmail(email, "Test Email", message);
-        return "Email sent successfully to " + email;
-    }
 
 }

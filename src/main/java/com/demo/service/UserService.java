@@ -1,5 +1,6 @@
 package com.demo.service;
 
+import com.demo.exception.CustomException;
 import com.demo.model.User;
 import com.demo.repo.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -11,8 +12,8 @@ public class UserService {
     private final UserRepository userRepository;
     public User saveUser(User user){
         User userResponse=userRepository.findByEmail(user.getEmail());
-        if(userResponse.getEmail().equals(user.getEmail())){
-           throw new   RuntimeException("User already exists");
+        if(userResponse!=null){
+            throw new CustomException("User already exists");
         }
         return userRepository.save(user);
     }
