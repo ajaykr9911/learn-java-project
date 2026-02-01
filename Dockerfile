@@ -1,14 +1,32 @@
-# 1. Use Java 21 runtime
+# ===============================
+# 1️⃣ BUILD STAGE
+# ===============================
+FROM maven:3.9.9-eclipse-temurin-21 AS builder
+
+WORKDIR /build
+
+# Copy Maven files first (better cache)
+COPY pom.xml .
+RUN mvn dependency:go-offline
+
+# Copy source code
+COPY src ./src
+
+# Build the JAR
+RUN mvn clean package -DskipTests
+
+# ===============================
+# 2️⃣ RUNTIME STAGE
+# ===============================
 FROM eclipse-temurin:21-jre
 
-# 2. Set working directory inside container
 WORKDIR /app
 
-# 3. Copy jar file into container
-COPY target/*.jar app.jar
+# Copy only the built JAR from builder stage
+COPY --from=builder /build/target/*.jar app.jar
 
-# 4. Expose application port
+# Expose app port
 EXPOSE 8080
 
-# 5. Run the application
+# Run Spring Boot app
 ENTRYPOINT ["java","-jar","app.jar"]
