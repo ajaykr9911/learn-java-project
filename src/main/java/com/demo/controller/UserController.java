@@ -7,6 +7,8 @@ import com.demo.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/users")
@@ -27,6 +29,14 @@ public class UserController {
     ) {
         emailService.sendEmails(email, "Test Email", message);
         return BaseResponse.success("Email sent successfully to " + email);
+    }
+
+    @GetMapping("/all")
+    public BaseResponse<Map<String, Object>> getAllUsers(
+            @RequestParam(defaultValue = "0")int page,
+            @RequestParam(defaultValue = "10") int size
+    ){
+        return BaseResponse.success(userService.findAll(page,size));
     }
 
 
