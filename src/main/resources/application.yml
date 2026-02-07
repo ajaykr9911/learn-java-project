@@ -3,6 +3,10 @@
 # ─────────────────────────────
 spring:
 
+  redis:
+    host: localhost
+    port: 6379
+
   kafka:
     bootstrap-servers: localhost:9092
     consumer:
@@ -23,6 +27,7 @@ spring:
   data:
     mongodb:
       uri: mongodb://localhost:27017/interview
+      auto-index-creation: true
 
   mail:
     host: smtp.gmail.com
@@ -36,3 +41,12 @@ spring:
           starttls:
             enable: true
 
+
+jwt:
+  secret: my-super-secret-key-my-super-secret-key-my-super-secret-key
+  accessTokenExpiration: 3600000
+
+logging:
+  level:
+    root: INFO
+    com.demo: DEBUG
