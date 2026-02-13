@@ -20,8 +20,10 @@ public class UserController {
     private final EmailService emailService;
 
     @PostMapping("/save")
-    public BaseResponse<User> saveUser(@RequestBody User user){
-        User savedUser=userService.saveUser(user);
+    public BaseResponse<User> saveUser(
+            @RequestHeader("Idempotency-Key") String idempotencyKey,
+            @RequestBody User user){
+        User savedUser=userService.saveUser(idempotencyKey,user);
         return BaseResponse.success(savedUser);
     }
 
@@ -61,6 +63,10 @@ public class UserController {
         return BaseResponse.success();
     }
 
+    @GetMapping("/test")
+    public BaseResponse<String> test(){
+        return BaseResponse.success("Hello");
+    }
 
 
 

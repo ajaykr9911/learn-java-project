@@ -1,5 +1,3 @@
-version: "3.8"
-
 services:
   mongo:
     image: mongo:6.0
@@ -9,15 +7,20 @@ services:
     volumes:
       - mongo-data:/data/db
 
+  redis:
+    image: redis:7
+    container_name: ajay-redis
+    ports:
+      - "6379:6379"
+
   app:
-    image: ajay
+    build: .
     container_name: ajay-app
     ports:
       - "8080:8080"
-    env_file:
-      - .env
     depends_on:
       - mongo
+      - redis
 
 volumes:
   mongo-data:

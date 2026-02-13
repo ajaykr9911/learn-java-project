@@ -5,7 +5,6 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -35,7 +34,8 @@ public class JwtFilter extends OncePerRequestFilter {
 
     private static final List<String> PUBLIC_ENDPOINTS = List.of(
             "/api/v1/users/save",
-            "/api/v1/users/login"
+            "/api/v1/users/login",
+            "/api/v1/users/test"
     );
 
     private static final String LOGOUT_ENDPOINT = "/api/v1/users/logout";

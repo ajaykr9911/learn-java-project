@@ -4,6 +4,7 @@ import com.demo.config.JwtUtil;
 import com.demo.exception.CustomException;
 import com.demo.model.User;
 import com.demo.model.dto.LoginRequest;
+import com.demo.model.dto.UserCreatedEvent;
 import com.demo.repo.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -26,20 +27,56 @@ public class UserService {
     private final RedisTemplate<String, Object> redisTemplate;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
+//    private final UserEventProducer userEventProducer;
+
 
 
 
     private static final String KEY = "USER:";
 
-    public User saveUser(User user) {
+    public User saveUser(String idempotencyKey, User user) {
 
-        User existingUser = userRepository.findByEmail(user.getEmail());
-        if (existingUser != null) {
-            throw new CustomException("User already exists");
+        String idemKey = "idem:signup:" + idempotencyKey;
+        String lockKey = "lock:user:email:" + user.getEmail();
+        String lockValue = UUID.randomUUID().toString();
+
+        boolean locked = acquireLock(lockKey, lockValue, 10);
+        if (!locked) {
+            throw new CustomException("Signup already in progress. Please retry.");
         }
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        return userRepository.save(user);
+
+        try {
+            User cachedUser = (User) redisTemplate.opsForValue().get(idemKey);
+            if (cachedUser != null) {
+                return cachedUser;
+            }
+
+            User existingUser = userRepository.findByEmail(user.getEmail());
+            if (existingUser != null) {
+                redisTemplate.opsForValue()
+                        .set(idemKey, existingUser, 10, TimeUnit.MINUTES);
+                throw new CustomException("User already exists");
+            }
+
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+            User savedUser = userRepository.save(user);
+            UserCreatedEvent event = new UserCreatedEvent();
+//            event.setUserId(savedUser.getId());
+//            event.setEmail(savedUser.getEmail());
+//            event.setFirstName(savedUser.getFirstName());
+//
+//            userEventProducer.publishUserCreated(event);
+
+            redisTemplate.opsForValue()
+                    .set(idemKey, savedUser, 10, TimeUnit.MINUTES);
+
+            return savedUser;
+
+        } finally {
+            releaseLock(lockKey, lockValue);
+        }
     }
+
 
     private static final String SEARCH_KEY = "USER_SEARCH:";
 
@@ -141,5 +178,19 @@ public class UserService {
 
         redisTemplate.delete("session:" + userId);
     }
+
+    private boolean acquireLock(String lockKey, String lockValue, long ttlSeconds) {
+        Boolean success = redisTemplate.opsForValue()
+                .setIfAbsent(lockKey, lockValue, ttlSeconds, TimeUnit.SECONDS);
+        return Boolean.TRUE.equals(success);
+    }
+
+    private void releaseLock(String lockKey, String lockValue) {
+        String currentValue = (String) redisTemplate.opsForValue().get(lockKey);
+        if (lockValue.equals(currentValue)) {
+            redisTemplate.delete(lockKey);
+        }
+    }
+
 
 }
