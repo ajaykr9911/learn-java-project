@@ -13,6 +13,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +28,8 @@ public class UserService {
     private final RedisTemplate<String, Object> redisTemplate;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
+    private final StringRedisTemplate stringRedisTemplate;
+
 //    private final UserEventProducer userEventProducer;
 
 
@@ -151,12 +154,12 @@ public class UserService {
         String jti = UUID.randomUUID().toString();
 
         String token = jwtUtil.generateToken(
-                user.getId().toString(),
+                user.getId(),
                 user.getEmail(),
                 jti
         );
 
-        redisTemplate.opsForValue().set(
+        stringRedisTemplate.opsForValue().set(
                 "session:" + user.getId(),
                 jti,
                 jwtUtil.getExpirationMillis(),

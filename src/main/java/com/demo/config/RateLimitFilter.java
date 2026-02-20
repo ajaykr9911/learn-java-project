@@ -1,18 +1,20 @@
 package com.demo.config;
 
 import com.demo.service.RateLimitService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.constraints.NotNull;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-
 import java.io.IOException;
+import java.util.Map;
 
 @Component
 @RequiredArgsConstructor
@@ -20,44 +22,78 @@ import java.io.IOException;
 public class RateLimitFilter extends OncePerRequestFilter {
 
     private final RateLimitService rateLimitService;
-
-    private static final int LIMIT = 5;
-    private static final long WINDOW_SECONDS = 5 * 60; // 300 seconds
+    private final RateLimitProperties properties;
+    private final ObjectMapper objectMapper;
 
     @Override
     protected void doFilterInternal(
-            HttpServletRequest request,
-            @NonNull HttpServletResponse response,
-            @NonNull FilterChain filterChain
+            @NonNull HttpServletRequest request,
+             HttpServletResponse response,
+            FilterChain filterChain
     ) throws ServletException, IOException {
+
+        if (!properties.isEnabled()) {
+            filterChain.doFilter(request, response);
+            return;
+        }
 
         String path = request.getRequestURI();
 
-        if (path.startsWith("/api/v1/users/test")) {
+        boolean protectedEndpoint = properties.getProtectedPaths()
+                .stream()
+                .anyMatch(path::startsWith);
 
-            String userKey;
+        if (!protectedEndpoint) {
+            filterChain.doFilter(request, response);
+            return;
+        }
 
-            if (request.getUserPrincipal() != null) {
-                userKey = "rate:user:" + request.getUserPrincipal().getName();
-            } else {
-                userKey = "rate:ip:" + request.getRemoteAddr();
-            }
+        String key = buildKey(request);
 
-            boolean allowed = rateLimitService.isAllowed(
-                    userKey, LIMIT, WINDOW_SECONDS
-            );
+        boolean allowed = rateLimitService.isAllowed(
+                key,
+                properties.getLimit(),
+                properties.getWindowSeconds()
+        );
 
-            if (!allowed) {
-                log.warn("Rate limit exceeded for key={}", userKey);
-                response.setStatus(429);
-                response.getWriter().write(
-                        "Rate limit exceeded. Try again after " + (WINDOW_SECONDS / 60) + " minutes."
-                );
-                return;
-            }
+        if (!allowed) {
+            log.warn("Rate limit exceeded for key={}", key);
+            sendTooManyRequests(response);
+            return;
         }
 
         filterChain.doFilter(request, response);
     }
-}
 
+    private String buildKey(HttpServletRequest request) {
+
+        String user = request.getUserPrincipal() != null
+                ? request.getUserPrincipal().getName()
+                : null;
+
+        if (user != null) {
+            return "rate:user:" + user;
+        }
+
+        String ip = request.getHeader("X-Forwarded-For");
+        if (ip == null || ip.isBlank()) {
+            ip = request.getRemoteAddr();
+        }
+
+        return "rate:ip:" + ip;
+    }
+
+    private void sendTooManyRequests(HttpServletResponse response)
+            throws IOException {
+
+        response.setStatus(429);
+        response.setContentType("application/json");
+
+        Map<String, Object> body = Map.of(
+                "success", false,
+                "message", "Too many requests. Please try again later."
+        );
+
+        response.getWriter().write(objectMapper.writeValueAsString(body));
+    }
+}
