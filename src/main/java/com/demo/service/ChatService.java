@@ -22,6 +22,7 @@ public class ChatService {
     private final ChatRepository chatRepository;
     private final SimpMessagingTemplate messagingTemplate;
     private final UserRepository userRepository;
+    private final ChatProducer chatProducer;
 
 
     public void processMessage(ChatRequest request) {
@@ -35,7 +36,8 @@ public class ChatService {
         message.setStatus("SENT");
 
         chatRepository.save(message);
-        System.out.println(0/0);
+
+//        System.out.println(0/0);
 
         boolean isOnline = OnlineUsers.isOnline(request.getReceiverId());
 
@@ -61,9 +63,11 @@ public class ChatService {
                 "/queue/messages",
                 message
         );
+//        chatProducer.send(message);
+
     }
 
-    @Scheduled(fixedDelay = 5000)
+//    @Scheduled(fixedDelay = 5000)
     public void retryUndeliveredMessages() {
 
         List<ChatMessage> pending =

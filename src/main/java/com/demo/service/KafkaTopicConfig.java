@@ -15,4 +15,12 @@
 //                .replicas(1)
 //                .build();
 //    }
+//
+//    @Bean
+//    public NewTopic chatTopic() {
+//        return TopicBuilder.name("chat-topic")
+//                .partitions(3)
+//                .replicas(1)
+//                .build();
+//    }
 //}

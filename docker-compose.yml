@@ -1,6 +1,7 @@
 version: '3.8'
 
 services:
+
   mongo:
     image: mongo:6.0
     container_name: ajay-mongo
@@ -17,6 +18,32 @@ services:
       - "6379:6379"
     restart: always
 
+  zookeeper:
+    image: confluentinc/cp-zookeeper
+    container_name: ajay-zookeeper
+    ports:
+      - "2181:2181"
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+    restart: always
+
+  kafka:
+    image: confluentinc/cp-kafka:7.4.0   # 🔥 IMPORTANT (not latest)
+    container_name: ajay-kafka
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+    restart: always
+
   app:
     build: .
     container_name: ajay-app
@@ -25,10 +52,12 @@ services:
     depends_on:
       - mongo
       - redis
+      - kafka
     environment:
       SPRING_DATA_MONGODB_URI: mongodb://mongo:27017/interview
       SPRING_DATA_REDIS_HOST: redis
       SPRING_DATA_REDIS_PORT: 6379
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092   # 🔥 IMPORTANT
     restart: always
 
 volumes:
