@@ -32,6 +32,7 @@ public class JwtFilter extends OncePerRequestFilter {
     }
 
 
+
     private static final List<String> PUBLIC_ENDPOINTS = List.of(
             "/api/v1/users/save",
             "/api/v1/users/login",
@@ -48,9 +49,19 @@ public class JwtFilter extends OncePerRequestFilter {
     ) throws ServletException, IOException {
 
         String path = request.getRequestURI();
+
+        String method = request.getMethod();
+
+        if (path.startsWith("/ws")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+        if ("OPTIONS".equalsIgnoreCase(method)) {
+            filterChain.doFilter(request, response);
+            return;
+        }
         log.info("{} {}", request.getMethod(), path);
 
-        // ✅ Public APIs
         if (PUBLIC_ENDPOINTS.stream().anyMatch(path::startsWith)) {
             filterChain.doFilter(request, response);
             return;
@@ -98,8 +109,13 @@ public class JwtFilter extends OncePerRequestFilter {
     }
 
     private void unauthorized(HttpServletResponse response, String message) throws IOException {
+        response.setHeader("Access-Control-Allow-Origin", "http://127.0.0.1:5500");
+        response.setHeader("Access-Control-Allow-Headers", "*");
+        response.setHeader("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
+
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         response.setContentType("application/json");
+
         response.getWriter().write(
                 "{\"success\":false,\"message\":\"" + message + "\"}"
         );

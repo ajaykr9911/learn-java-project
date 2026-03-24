@@ -1,3 +1,5 @@
+version: '3.8'
+
 services:
   mongo:
     image: mongo:6.0
@@ -6,12 +8,14 @@ services:
       - "27017:27017"
     volumes:
       - mongo-data:/data/db
+    restart: always
 
   redis:
     image: redis:7
     container_name: ajay-redis
     ports:
       - "6379:6379"
+    restart: always
 
   app:
     build: .
@@ -21,6 +25,11 @@ services:
     depends_on:
       - mongo
       - redis
+    environment:
+      SPRING_DATA_MONGODB_URI: mongodb://mongo:27017/interview
+      SPRING_DATA_REDIS_HOST: redis
+      SPRING_DATA_REDIS_PORT: 6379
+    restart: always
 
 volumes:
   mongo-data:

@@ -2,9 +2,12 @@ package com.demo.controller;
 
 import com.demo.model.User;
 import com.demo.model.dto.BaseResponse;
+import com.demo.model.dto.ChatMessage;
 import com.demo.model.dto.LoginRequest;
 import com.demo.model.dto.LoginResponse;
 import com.demo.service.EmailService;
+import com.demo.service.OnlineUsers;
+import com.demo.service.SocketService;
 import com.demo.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +21,7 @@ import java.util.Map;
 public class UserController {
     private final UserService userService;
     private final EmailService emailService;
+    private final SocketService socketService;
 
     @PostMapping("/save")
     public BaseResponse<User> saveUser(
@@ -68,6 +72,18 @@ public class UserController {
         return BaseResponse.success("Hello");
     }
 
+
+    @PostMapping("/send")
+    public String send(@RequestBody ChatMessage message) {
+        socketService.sendToTopic("messages", message);
+        return "Message sent!";
+    }
+
+    @GetMapping("/status/{userId}")
+    public Map<String, Boolean> getStatus(@PathVariable String userId) {
+        boolean online = OnlineUsers.isOnline(userId);
+        return Map.of("online", online);
+    }
 
 
 }
