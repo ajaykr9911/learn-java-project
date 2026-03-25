@@ -20,4 +20,5 @@ public class ChatMessage {
     private String senderName;
     private String receiverName;
     private String status;
+    private Long seq;
 }

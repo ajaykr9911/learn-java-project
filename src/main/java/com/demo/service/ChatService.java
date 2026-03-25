@@ -34,6 +34,8 @@ public class ChatService {
         message.setTimestamp(LocalDateTime.now());
 
         message.setStatus("SENT");
+        message.setSeq(request.getSeq());
+
 
         chatRepository.save(message);
 
@@ -63,11 +65,9 @@ public class ChatService {
                 "/queue/messages",
                 message
         );
-//        chatProducer.send(message);
-
     }
 
-//    @Scheduled(fixedDelay = 5000)
+    //    @Scheduled(fixedDelay = 5000)
     public void retryUndeliveredMessages() {
 
         List<ChatMessage> pending =
@@ -100,5 +100,11 @@ public class ChatService {
                 log.error("Retry failed for {}", msg.getId());
             }
         }
+    }
+
+    public void deleteConversation(String user1, String user2) {
+        // Delete messages in both directions
+        chatRepository.deleteBySenderIdAndReceiverId(user1, user2);
+        chatRepository.deleteBySenderIdAndReceiverId(user2, user1);
     }
 }

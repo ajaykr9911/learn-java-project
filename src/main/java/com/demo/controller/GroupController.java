@@ -5,9 +5,12 @@ import com.demo.model.GroupMessage;
 import com.demo.model.dto.CreateGroupRequest;
 import com.demo.service.GroupService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -29,5 +32,18 @@ public class GroupController {
             @RequestParam(defaultValue = "0") int page
     ) {
         return groupService.getGroupMessages(groupId, page);
+    }
+
+    @DeleteMapping("/{groupId}")
+    public ResponseEntity<?> deleteGroup(
+            @PathVariable String groupId,
+            @RequestHeader("Authorization") String authHeader) {
+        try {
+            groupService.deleteGroup(groupId);
+            return ResponseEntity.ok(Map.of("message", "Group deleted successfully"));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", e.getMessage()));
+        }
     }
 }

@@ -14,8 +14,7 @@ public class GroupSocketController {
 
     @MessageMapping("/group")
     public void sendGroupMessage(GroupMessageRequest request) {
+        System.out.println("Received group message for: " + request.getGroupId());
         groupService.processGroupMessage(request);
     }
-
-
 }

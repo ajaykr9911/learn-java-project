@@ -7,4 +7,5 @@ public class ChatRequest {
     private String senderId;
     private String receiverId;
     private String content;
+    private Long seq;
 }

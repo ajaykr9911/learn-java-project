@@ -11,4 +11,6 @@ public interface GroupMessageRepository extends MongoRepository<GroupMessage, St
             String groupId,
             Pageable pageable
     );
+
+    void deleteByGroupId(String groupId);
 }
