@@ -33,4 +33,5 @@ public interface ChatRepository extends MongoRepository<ChatMessage, String> {
 
 //    boolean existsByClientId(String clientId);
 
+//    List<ChatMessage> findByStatusOrderBySeqAsc(String status);
 }

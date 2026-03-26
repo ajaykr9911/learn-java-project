@@ -32,8 +32,7 @@ public class ChatService {
         message.setReceiverId(request.getReceiverId());
         message.setContent(request.getContent());
         message.setTimestamp(LocalDateTime.now());
-
-        message.setStatus("SENT");
+        message.setType(request.getType());
         message.setSeq(request.getSeq());
 
 

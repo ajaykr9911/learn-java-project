@@ -85,14 +85,14 @@ public class UserService {
 
     public Map<String, Object> findAll(int page, int size, String search, String userId) {
 
-        String cacheKey = SEARCH_KEY + page + ":" + size + ":" + search + ":" + userId;
+//        String cacheKey = SEARCH_KEY + page + ":" + size + ":" + search + ":" + userId;
+//
+//        Map<String, Object> cachedResponse =
+//                (Map<String, Object>) redisTemplate.opsForValue().get(cacheKey);
 
-        Map<String, Object> cachedResponse =
-                (Map<String, Object>) redisTemplate.opsForValue().get(cacheKey);
-
-        if (cachedResponse != null) {
-            return cachedResponse;
-        }
+//        if (cachedResponse != null) {
+//            return cachedResponse;
+//        }
 
         Pageable pageable = PageRequest.of(page, size);
         Page<User> userPage;
@@ -119,7 +119,7 @@ public class UserService {
         response.put("totalPages", userPage.getTotalPages());
         response.put("totalElements", userPage.getTotalElements());
 
-        redisTemplate.opsForValue().set(cacheKey, response, 5, TimeUnit.MINUTES);
+//        redisTemplate.opsForValue().set(cacheKey, response, 5, TimeUnit.MINUTES);
 
         return response;
     }
@@ -196,4 +196,21 @@ public class UserService {
     }
 
 
+    public User getSelf(HttpServletRequest request) {
+        String token = jwtUtil.resolveToken(request);
+        String userId= jwtUtil.getUserIdFromToken(token);
+        User user= userRepository.findById(userId).orElseThrow(()->new CustomException("User not found"));
+        return user;
+    }
+
+    public User editProfile(HttpServletRequest request, User user) {
+        String token = jwtUtil.resolveToken(request);
+        String userId= jwtUtil.getUserIdFromToken(token);
+        User editUser= userRepository.findById(userId).orElseThrow(()->new CustomException("User not found"));
+        editUser.setFirstName(user.getFirstName());
+        editUser.setLastName(user.getLastName());
+        if(user.getPhoneNumber() != null) editUser.setPhoneNumber(user.getPhoneNumber());
+        userRepository.save(editUser);
+        return editUser;
+    }
 }

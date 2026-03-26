@@ -85,5 +85,15 @@ public class UserController {
         return Map.of("online", online);
     }
 
+    @GetMapping("/self")
+    public BaseResponse<User> getSelf(HttpServletRequest request) {
+        return BaseResponse.success(userService.getSelf(request));
+    }
+
+    @PutMapping("/edit-profile")
+    public BaseResponse<User> editProfile(HttpServletRequest request, @RequestBody User user) {
+        return BaseResponse.success(userService.editProfile(request, user));
+    }
+
 
 }

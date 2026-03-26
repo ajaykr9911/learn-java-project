@@ -2,12 +2,21 @@
 # LOCAL PROFILE (TESTING)
 # ─────────────────────────────
 
+server:
+#  address: 0.0.0.0
+  port: 8080
+  tomcat:
+    connection-timeout: 20000
 
 jwt:
   secret: my-super-secret-key-my-super-secret-key-my-super-secret-key
   accessTokenExpiration: 3600000
 
 spring:
+  servlet:
+    multipart:
+      max-file-size: 25MB
+      max-request-size: 25MB
 
   redis:
     host: redis
@@ -65,3 +74,4 @@ app:
     protected-paths:
       - /api/v1/users/login
       - /api/v1/users/test
+

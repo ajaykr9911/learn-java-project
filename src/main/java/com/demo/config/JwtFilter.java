@@ -36,7 +36,8 @@ public class JwtFilter extends OncePerRequestFilter {
     private static final List<String> PUBLIC_ENDPOINTS = List.of(
             "/api/v1/users/save",
             "/api/v1/users/login",
-            "/api/v1/users/test"
+            "/api/v1/users/test",
+            "/uploads/"
     );
 
     private static final String LOGOUT_ENDPOINT = "/api/v1/users/logout";

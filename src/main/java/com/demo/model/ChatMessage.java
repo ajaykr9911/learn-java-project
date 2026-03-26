@@ -16,6 +16,7 @@ public class ChatMessage {
     private String senderId;
     private String receiverId;
     private String content;
+    private String type="TEXT";
     private LocalDateTime timestamp;
     private String senderName;
     private String receiverName;

@@ -35,7 +35,8 @@ public class SecurityConfig {
                                 "/api/v1/users/login",
                                 "/api/v1/users/test/**",
                                 "/ws/**",
-                                "/api/v1/users/send"
+                                "/api/v1/users/send",
+                                "/uploads/**"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
