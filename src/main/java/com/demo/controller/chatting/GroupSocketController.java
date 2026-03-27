@@ -1,7 +1,7 @@
-package com.demo.controller;
+package com.demo.controller.chatting;
 
 import com.demo.model.dto.GroupMessageRequest;
-import com.demo.service.GroupService;
+import com.demo.service.chatservice.GroupService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.stereotype.Controller;

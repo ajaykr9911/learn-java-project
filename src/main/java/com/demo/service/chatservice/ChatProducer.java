@@ -1,4 +1,4 @@
-package com.demo.service;
+package com.demo.service.chatservice;
 
 import com.demo.model.ChatMessage;
 import lombok.RequiredArgsConstructor;

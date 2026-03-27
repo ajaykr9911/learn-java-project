@@ -27,16 +27,19 @@ public class SecurityConfig {
                 .sessionManagement(sm ->
                         sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        // ✅ VERY IMPORTANT (fixes your issue)
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-
                         .requestMatchers(
                                 "/api/v1/users/save",
                                 "/api/v1/users/login",
                                 "/api/v1/users/test/**",
                                 "/ws/**",
                                 "/api/v1/users/send",
-                                "/uploads/**"
+                                "/uploads/**",
+                                "/api/files/upload",
+                                "/api/status/**" ,
+                                "/api/audits",
+                                "/api/v1/users/webhook/**",
+                                "/api/v1/urls/**"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )

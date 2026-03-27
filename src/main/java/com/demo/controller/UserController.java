@@ -6,7 +6,7 @@ import com.demo.model.dto.ChatMessage;
 import com.demo.model.dto.LoginRequest;
 import com.demo.model.dto.LoginResponse;
 import com.demo.service.EmailService;
-import com.demo.service.OnlineUsers;
+import com.demo.service.chatservice.OnlineUsers;
 import com.demo.service.SocketService;
 import com.demo.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;

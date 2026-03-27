@@ -1,14 +1,12 @@
-package com.demo.service;
+package com.demo.service.chatservice;
 
 import com.demo.model.ChatMessage;
-import com.demo.model.User;
 import com.demo.model.dto.ChatRequest;
 import com.demo.repo.ChatRepository;
 import com.demo.repo.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;

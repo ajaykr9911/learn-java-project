@@ -1,8 +1,8 @@
-package com.demo.controller;
+package com.demo.controller.chatting;
 
 import com.demo.model.dto.ChatRequest;
 import com.demo.repo.ChatRepository;
-import com.demo.service.ChatService;
+import com.demo.service.chatservice.ChatService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

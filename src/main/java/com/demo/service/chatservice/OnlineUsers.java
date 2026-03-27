@@ -1,4 +1,4 @@
-package com.demo.service;
+package com.demo.service.chatservice;
 
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;

@@ -1,5 +1,6 @@
 package com.demo.service;
 
+import com.demo.service.chatservice.OnlineUsers;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.messaging.SessionConnectEvent;

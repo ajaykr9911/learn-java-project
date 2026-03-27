@@ -1,9 +1,9 @@
-package com.demo.controller;
+package com.demo.controller.chatting;
 
 import com.demo.model.ChatGroup;
 import com.demo.model.GroupMessage;
 import com.demo.model.dto.CreateGroupRequest;
-import com.demo.service.GroupService;
+import com.demo.service.chatservice.GroupService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

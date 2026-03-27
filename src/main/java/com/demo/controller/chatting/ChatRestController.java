@@ -1,4 +1,4 @@
-package com.demo.controller;
+package com.demo.controller.chatting;
 
 import com.demo.model.ChatMessage;
 import com.demo.model.TypingMessage;
