@@ -41,6 +41,9 @@ spring:
     mongodb:
       uri: mongodb://localhost:27017/interview
       auto-index-creation: true
+#
+#  elasticsearch:
+#    uris: http://localhost:9200
 
 #      data:
 #        mongodb:
