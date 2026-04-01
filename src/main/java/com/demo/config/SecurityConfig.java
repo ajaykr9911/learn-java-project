@@ -27,7 +27,11 @@ public class SecurityConfig {
                 .sessionManagement(sm ->
                         sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
+
+                        // Allow preflight requests
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+
+                        // ── Public endpoints ──────────────────────────────
                         .requestMatchers(
                                 "/api/v1/users/save",
                                 "/api/v1/users/login",
@@ -36,11 +40,19 @@ public class SecurityConfig {
                                 "/api/v1/users/send",
                                 "/uploads/**",
                                 "/api/files/upload",
-                                "/api/status/**" ,
+                                "/api/status/**",
                                 "/api/audits",
                                 "/api/v1/users/webhook/**",
                                 "/api/v1/urls/**"
                         ).permitAll()
+
+                        // ── Stripe webhook — must be public (no JWT from Stripe) ──
+                        .requestMatchers(HttpMethod.POST, "/api/v1/payments/webhook").permitAll()
+
+                        // ── Products — GET is public, write needs auth ────
+                        .requestMatchers(HttpMethod.GET, "/api/v1/products/**").permitAll()
+
+                        // ── All other requests require valid JWT ──────────
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);

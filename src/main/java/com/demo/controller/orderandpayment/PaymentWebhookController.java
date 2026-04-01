@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Map;
 
 @RestController
@@ -36,8 +37,8 @@ public class PaymentWebhookController {
         }
 
         order.setStatus(status);
-        order.setPaymentId(paymentId);
-        order.setUpdatedAt(LocalDateTime.now());
+//        order.setPaymentId(paymentId);
+//        order.setUpdatedAt(LocalDateTime.now().now());
 
         orderRepository.save(order);
 

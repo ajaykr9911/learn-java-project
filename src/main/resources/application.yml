@@ -78,3 +78,11 @@ app:
       - /api/v1/users/login
       - /api/v1/users/test
 
+
+stripe:
+  secret:
+    key: sk_test_51THGr10pho9cGbODNUWrEmiGMyMYLBe3MzrEMYfmWfwgVDjR3lNeGcdc5aCvGq4eiByPpPVQRSB0lCnDYRMyjGPz00Ry56FG4v
+  webhook:
+    secret: whsec_your_webhook_secret_here
+  public:
+    key: pk_test_51THGr10pho9cGbODFOFjbDVbTsx7bCgGhWGq6Zp7WJtOevuYj5jst2LwcmTNCpiz6YoOazbOPAGtRhCFLOzeHKiv00j7F0wyGG

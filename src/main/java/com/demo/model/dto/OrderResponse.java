@@ -2,40 +2,25 @@ package com.demo.model.dto;
 
 import lombok.Data;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
-
 @Data
-public class OrderResponseDto {
-
+public class OrderResponse {
     private String orderId;
-
     private String userId;
-
-    private List<Item> items;   // ✅ order items
-
+    private String status;
+    private String paymentMethod;
     private double totalAmount;
+    private List<OrderItemDto> items;
 
-    private String status; // CREATED, PAID, CANCELLED
-
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
-
-    // 🔹 Nested Item DTO
     @Data
-    public static class Item {
-
+    public static class OrderItemDto {
         private String productId;
-
         private String name;
         private String image;
-
         private double price;
         private double discountPrice;
-
         private int quantity;
-
         private double totalPrice;
     }
 }
